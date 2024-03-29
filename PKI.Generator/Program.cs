@@ -59,7 +59,7 @@ void MakeCa()
 
         using (var caCert = parentReq.CreateSelfSigned(
                    DateTimeOffset.UtcNow.AddDays(-1),
-                   DateTimeOffset.UtcNow.AddYears(10)))
+                   DateTimeOffset.UtcNow.AddYears(11)))
         {
             var parentBytes = caCert.Export(X509ContentType.Pkcs12, "udap-test");
             SureFhirLabsCertStore().EnsureDirectoryExists();
@@ -207,20 +207,31 @@ static IEnumerable<List<string>> SSLProxyCerts()
 
     yield return new List<string>
     {
+        "CN=sandbox",                       //DistinguishedName
+        "sandbox"                      //SubjAltName
+    };
+    yield return new List<string>
+    {
             "CN=sandbox-manager-api",       //DistinguishedName
             "sandbox-manager-api"           //SubjAltName
     };
 
     yield return new List<string>
     {
-            "CN=r4",                        //DistinguishedName
-            "r4"                            //SubjAltName
+        "CN=stu3",                        //DistinguishedName
+        "stu3"                            //SubjAltName
     };
 
     yield return new List<string>
     {
-            "CN=r5",                        //DistinguishedName
-            "r5"                            //SubjAltName
+        "CN=stu4",                        //DistinguishedName
+        "stu4"                            //SubjAltName
+    };
+
+    yield return new List<string>
+    {
+        "CN=stu5",                        //DistinguishedName
+        "stu5"                            //SubjAltName
     };
 }
 

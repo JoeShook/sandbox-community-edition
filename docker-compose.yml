@@ -5,17 +5,39 @@ volumes:
 
 services:
 
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+      - "./certs:/etc/nginx/certs"
+    depends_on:
+      - sandbox
+      - sandbox-manager-api
+      - sandbox-mysql
+      - keycloak
+      - r4
+      - r5
+      - stu3
+    restart: unless-stopped
+
   keycloak:
-    image: jboss/keycloak:latest
+    image: quay.io/keycloak/keycloak:legacy
 
     volumes:
       - "./realm_properties.json:/etc/security/realm_properties.json"
     ports:
       - "8080:8080"
+      - "8443:8443"
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
-      - KEYCLOAK_IMPORT=/etc/security/realm_properties.json
+      - KEYCLOAK_HTTPS_PORT=8443
+      - KEYCLOAK_HTTPS_PROTOCOL=proxy-https
+      - PROXY_ADDRESS_FORWARDING=true
+      - KEYCLOAK_IMPORT=/etc/security/realm_properties.json      
     command:
       [
         "-Djboss.http.port=8080",
@@ -114,26 +136,26 @@ services:
   #     sandbox-mysql:
   #       condition: service_healthy
 
-  # stu3:
-  #   image: logicahealth/api:latest
-  #   ports:
-  #     - "8079:8079"
-  #   environment:
-  #     - SPRING_PROFILES_ACTIVE=stu3,multitenant
-  #     - API_PORT=8079
-  #     - SANDBOX_NAME=hspc9
-  #     - SBMA_HOST=sandbox-manager-api
-  #     - SBMA_PORT=12000
-  #     - DB_HOST=sandbox-mysql
-  #     - DB_PORT=3306
-  #     - DB_USER=root
-  #     - DB_PASSWORD=password
-  #     - AUTH_HOST=sandbox
-  #     - AUTH_PORT=8060
-  #     - MANIFEST_OVERRIDE=false
-  #   restart: unless-stopped
-  #   depends_on:
-  #   - sandbox-mysql
+  stu3:
+    image: logicahealth/api:latest
+    ports:
+      - "8079:8079"
+    environment:
+      - SPRING_PROFILES_ACTIVE=stu3,multitenant
+      - API_PORT=8079
+      - SANDBOX_NAME=hspc9
+      - SBMA_HOST=sandbox-manager-api
+      - SBMA_PORT=12000
+      - DB_HOST=sandbox-mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - AUTH_HOST=sandbox
+      - AUTH_PORT=8060
+      - MANIFEST_OVERRIDE=false
+    restart: unless-stopped
+    depends_on:
+    - sandbox-mysql
 
   r4:
     image: logicahealth/api:latest

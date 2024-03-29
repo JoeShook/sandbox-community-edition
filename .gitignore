@@ -1,0 +1,24 @@
+
+
+/PKI.Generator/certstores/nginx_proxy_ssl
+
+# Build results
+
+
+
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Oo]bj/
+.vs/
+x86/
+x64/
+*.gz
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+
